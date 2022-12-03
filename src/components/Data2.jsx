@@ -2,6 +2,7 @@ import React from "react";
 import { firestore } from "src/firebase";
 import styled from "styled-components";
 import { useEffect, useState } from "react";
+import { collection, doc, getDocs } from "firebase/firestore";
 
 const Container = styled.div`
   margin-top: 20px;
@@ -47,45 +48,64 @@ const Price = styled.p`
   margin-top: 10px;
 `;
 
+const DetailTitle = styled.div`
+  font-size: 15px;
+  font-weight: 600;
+  margin-left: 24px;
+`;
+
+const DetailContent = styled.div`
+  font-size: 12px;
+  font-weight: 500;
+  margin-left: 24px;
+  margin-top: 10px;
+`;
+
 export default function Data2() {
-  const [docContent, setDocContent] = useState();
-  const [docId, setDocId] = useState();
-  const [docTitle, setDocTitle] = useState();
-  const [docEndDate, setDocEndDate] = useState();
-  const [docAmount, setDocAmount] = useState();
+  // 이따가 users 추가하고 삭제하는거 진행을 도와줄 state
+  const [users, setUsers] = useState([]);
+  // db의 users 컬렉션을 가져옴
+  const usersCollectionRef = collection(firestore, "carrot");
 
+  // 유니크 id를 만들기 위한 useId(); - react 18 기능으로, 이 훅을 이렇게 사용하는게 맞고 틀린지는 모른다.
+  const uniqueId = [1, 2, 3, 4, 5];
+  //console.log(uniqueId)
+
+  // 시작될때 한번만 실행
   useEffect(() => {
-    // bucket이라는 변수로 firestore의 collection인 bucket에 접근
-    const bucket = firestore.collection("changeFunding");
+    // 비동기로 데이터 받을준비
+    const getUsers = async () => {
+      // getDocs로 컬렉션안에 데이터 가져오기
+      const data = await getDocs(usersCollectionRef);
+      // users에 data안의 자료 추가. 객체에 id 덮어씌우는거
+      setUsers(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+    };
 
-    // collection의 document인 "bucket_item"을 가져온다.
-    bucket
-      .doc("OiuadHybToDGRSoUN9HO")
-      .get()
-      .then((doc) => {
-        // document의 데이터를 가져옴
-        setDocContent(doc.data().c_funding_content);
-        // document의 id를 가져옴
-        // setDocId(doc.id);
-        setDocTitle(doc.data().c_funding_title);
-        setDocEndDate(doc.data().c_funding_end_date);
-        setDocAmount(doc.data().c_funding_target_amount);
-      });
-  });
+    getUsers();
+  },);
 
-  return (
+  // 띄워줄 데이터 key값에 고유ID를 넣어준다.
+  const showUsers = users.map((value) => (
     <>
-      <Container>
+      <Container key={doc}>
         <Product>
           <Thumbnail />
           <FlexGrow>
-            <Title>{docTitle}</Title>
-            {/* <Date>{docEndDate}</Date> */}
-            <Price>목표 모금액 : {docAmount} klay</Price>
-            <Price>{docContent}</Price>
+            <Title>{value.c_funding_title}</Title>
+            <Price>목표 모금액 : {value.c_funding_target_amount} klay</Price>
+            <Date>종료일 : </Date>
+            {/* <Date>{value.c_funding_end_date}</Date> */}
           </FlexGrow>
         </Product>
+        <DetailTitle>{value.c_funding_details}</DetailTitle>
+        <DetailContent>{value.c_funding_content}</DetailContent>
       </Container>
+    </>
+  ));
+
+  return (
+    <>
+      <div>{showUsers}</div>
     </>
   );
 }
