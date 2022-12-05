@@ -1,8 +1,8 @@
 import React from "react";
-import { firestore } from "src/firebase";
+import { firestore} from "src/firebase";
 import styled from "styled-components";
 import { useEffect, useState } from "react";
-import { collection, doc, getDocs } from "firebase/firestore";
+import { collection, getDocs} from "firebase/firestore";
 
 const Container = styled.div`
   margin-top: 20px;
@@ -67,9 +67,7 @@ export default function Data2() {
   // db의 users 컬렉션을 가져옴
   const usersCollectionRef = collection(firestore, "carrot");
 
-  // 유니크 id를 만들기 위한 useId(); - react 18 기능으로, 이 훅을 이렇게 사용하는게 맞고 틀린지는 모른다.
-  const uniqueId = [1, 2, 3, 4, 5];
-  //console.log(uniqueId)
+
 
   // 시작될때 한번만 실행
   useEffect(() => {
@@ -78,23 +76,23 @@ export default function Data2() {
       // getDocs로 컬렉션안에 데이터 가져오기
       const data = await getDocs(usersCollectionRef);
       // users에 data안의 자료 추가. 객체에 id 덮어씌우는거
-      setUsers(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+      setUsers(
+        data.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
+      );
     };
-
     getUsers();
-  },);
+  }, []);
 
   // 띄워줄 데이터 key값에 고유ID를 넣어준다.
   const showUsers = users.map((value) => (
     <>
-      <Container key={doc}>
+      <Container>
         <Product>
           <Thumbnail />
           <FlexGrow>
             <Title>{value.c_funding_title}</Title>
-            <Price>목표 모금액 : {value.c_funding_target_amount} klay</Price>
-            <Date>종료일 : </Date>
-            {/* <Date>{value.c_funding_end_date}</Date> */}
+            <Price>목표 모금액 : {value.c_funding_target_amount} eth</Price>
+            <Date>{value.c_funding_end_date.toDate().toString()}</Date>
           </FlexGrow>
         </Product>
         <DetailTitle>{value.c_funding_details}</DetailTitle>
