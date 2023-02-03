@@ -1,11 +1,11 @@
 import GlobalStyle from "./GlobalStyle";
-import Data2 from "@components/Data2";
+import Data from "@components/Data";
 
 function App() {
   return (
     <>
       <GlobalStyle />
-      <Data2 />
+      <Data />
     </>
   )
 }

@@ -21,7 +21,6 @@ const Thumbnail = styled.div`
   border-radius: 20px;
   background-size: cover;
   background-position: center;
-  background-image: url("https://via.placeholder.com/350");
 `;
 
 const FlexGrow = styled.div`
@@ -61,11 +60,11 @@ const DetailContent = styled.div`
   margin-top: 10px;
 `;
 
-export default function Data2() {
+export default function Data() {
   // 이따가 users 추가하고 삭제하는거 진행을 도와줄 state
   const [users, setUsers] = useState([]);
   // db의 users 컬렉션을 가져옴
-  const usersCollectionRef = collection(firestore, "changeFunding");
+  const usersCollectionRef = collection(firestore, "컬렉션 이름");
 
   // 시작될때 한번만 실행
   useEffect(() => {
@@ -80,19 +79,19 @@ export default function Data2() {
   }, []);
 
   // 띄워줄 데이터 key값에 고유ID를 넣어준다.
+  // timestamp 값이면 {value.유통기한.toDate().toString()}
+  // <DetailTitle>{value.c_funding_details}</DetailTitle>
+  // <DetailContent>{value.c_funding_content}</DetailContent>
   const showUsers = users.map((value) => (
     <>
       <Container>
         <Product>
-          <Thumbnail />
           <FlexGrow>
-            <Title>{value.c_funding_title}</Title>
-            <Price>목표 모금액 : {value.c_funding_target_amount} ETH</Price>
-            <Date>종료일 : {value.c_funding_end_date.toDate().toString()}</Date>
+            <Title>{value.이름}</Title>
+            <Price> 칼로리 : {value.칼로리} ETH</Price>
+            <Date>유통기한 : {value.유통기한}</Date>
           </FlexGrow>
         </Product>
-        <DetailTitle>{value.c_funding_details}</DetailTitle>
-        <DetailContent>{value.c_funding_content}</DetailContent>
       </Container>
     </>
   ));
